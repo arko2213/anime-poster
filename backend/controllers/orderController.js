@@ -2,14 +2,10 @@ const Order = require('../models/Order');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 
-// Initialize Razorpay only if credentials are provided and valid
-let razorpay = null;
-if (process.env.RAZORPAY_KEY && process.env.RAZORPAY_KEY !== 'your_razorpay_key_here') {
-  razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY,
-    key_secret: process.env.RAZORPAY_SECRET,
-  });
-}
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY || 'mock_key',
+  key_secret: process.env.RAZORPAY_SECRET || 'mock_secret',
+});
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -76,8 +72,8 @@ const createRazorpayOrder = async (req, res) => {
   try {
     const { amount } = req.body;
     
-    // Return mock response if Razorpay not configured
-    if (!razorpay) {
+    // Mock Razorpay if not configured
+    if (!process.env.RAZORPAY_KEY || process.env.RAZORPAY_KEY === 'your_razorpay_key_here') {
       return res.json({ razorpayOrderId: 'order_mock_' + Date.now(), amount: amount * 100 });
     }
 
@@ -101,7 +97,7 @@ const verifyAndPayOrder = async (req, res) => {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
     // Verify signature only if Razorpay is configured
-    if (razorpay) {
+    if (process.env.RAZORPAY_KEY && process.env.RAZORPAY_KEY !== 'your_razorpay_key_here') {
       const body = razorpay_order_id + '|' + razorpay_payment_id;
       const expectedSignature = crypto
         .createHmac('sha256', process.env.RAZORPAY_SECRET)
