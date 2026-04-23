@@ -9,7 +9,7 @@ const getBaseURL = () => {
   
   // In development, use localhost
   if (import.meta.env.DEV) {
-    return 'http://localhost:5000/api';
+    return 'http://localhost:5005/api';
   }
   
   // In production, use relative path (same domain)
