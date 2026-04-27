@@ -11,7 +11,6 @@ const orderRoutes = require('./routes/orderRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 const app = express();
-
 // Middleware
 app.use(cors({
   origin: process.env.FRONTEND_URL
